@@ -10,20 +10,19 @@ class Detector:
 
     def __get_arp_table(self):
         arp_table = subprocess.check_output(['arp', '-a'], encoding='UTF-8').splitlines()
-        return arp_table
+        return arp_table[-1]
 
 
     def run(self):
         current_table = self.__get_arp_table()
         if self.router_MAC not in current_table[-1]:
             print(f'\n[!] An ARP attack may have been launched (Router MAC was changed) [!]')
-            print(f'\tcurrent table > {current_table}')
+            print(f'\tcurrent table > {current_table.split(" ")[3]}')
             print(f'\tbase table > {self.router_MAC}\n')
         elif current_table != self.truth_table:
             print(f'\n[!] An ARP attack may have been launched (ARP Table was changed) [!]\n')
         else:
             print(f'[-] Any ARP attack not detected.')
-
         sleep(self.interval)
         self.run()
 
